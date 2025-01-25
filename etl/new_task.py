@@ -3,6 +3,7 @@ def new_task_function():
     print("This is a new task")
     # Import necessary libraries
     from pyspark.sql import SparkSession
+    # pyspark.sql is a python library, SparkSession is a function from this libary
   
     import os
 
@@ -94,21 +95,23 @@ def new_task_function():
         
         # Truncate the existing table in PostgreSQL before loading new data
         from psycopg2 import connect
+        # psycopg2 is a library for python
 
         conn = None  # Initialize conn to None
         try:
             # Ensure the URL is correctly formatted for psycopg2
-            if pg_url.startswith('jdbc:'):
-                pg_url = pg_url[5:]
+            if pg_url.startswith('jdbc:'): #check if the postgresql url start with 'jdbc'
+                pg_url = pg_url[5:] 
+                # take the url from the 5th character
             
-            conn = connect(
+            conn = connect(  # create a connection to postgresql
                 dbname=pg_url.split('/')[-1],
                 user=pg_properties['user'],
                 password=pg_properties['password'],
                 host=pg_url.split('/')[2].split(':')[0],
                 port=pg_url.split('/')[2].split(':')[1] if ':' in pg_url.split('/')[2] else '5432'
             )
-            with conn.cursor() as cursor:
+            with conn.cursor() as cursor:  # use the connection to truncate the existing table
                 cursor.execute("TRUNCATE TABLE AdventureWorks RESTART IDENTITY CASCADE")
                 conn.commit()
                 print("AdventureWorks table truncated successfully.")
