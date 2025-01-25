@@ -35,7 +35,7 @@ def excel_to_snowflake_etl():
     
     # Function to load all sheets from an Excel file and write them to Snowflake
     def load_and_write_excel_to_snowflake(snowflake_options: dict):
-        github_url = "https://github.com/Fiona-BDA/repo_pipeline/blob/1df663861d5f3e55c5d6597a557fa2a78a8f514c/Fiona_AdventureWorks_Sales_test.xlsx"  # Replace with the actual raw URL
+        github_url = "https://github.com/Fiona-BDA/repo_pipeline/raw/1df663861d5f3e55c5d6597a557fa2a78a8f514c/Fiona_test_Promotion_new_data.xlsx"  # Replace with the actual raw URL
 
         # test
         # Step 1: Download the Excel file from GitHub
