@@ -37,6 +37,7 @@ def excel_to_snowflake_etl():
     def load_and_write_excel_to_snowflake(snowflake_options: dict):
         github_url = "https://github.com/Fiona-BDA/repo_pipeline/blob/1df663861d5f3e55c5d6597a557fa2a78a8f514c/Fiona_AdventureWorks_Sales_test.xlsx"  # Replace with the actual raw URL
 
+        # test
         # Step 1: Download the Excel file from GitHub
         response = requests.get(github_url)
         if response.status_code == 200:
