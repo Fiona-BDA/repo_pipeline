@@ -23,7 +23,12 @@ with DAG(
         task_id="new_task",
         python_callable=new_task_function
     )
+    SHAMPOO_task = PythonOperator(
+        task_id="SHAMPOO_task",
+        python_callable= new_task_function_Fiona
+    )
+
 
     # Set task dependencies
-    etl_task >> new_task
+    etl_task >> new_task >> SHAMPOO_task
 
