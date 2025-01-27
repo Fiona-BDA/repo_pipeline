@@ -145,6 +145,74 @@ def new_task_function_Fiona():
 
 
 
+# Load the second spreadsheet from snowflake to postgresql
+
+def load_and_join_tables_copy(snowflake_options: dict):
+        # Load data from Snowflake
+        SHAMPOO_copy_df = spark.read \
+            .format("snowflake") \
+            .options(**snowflake_options) \
+            .option("dbtable", "SHAMPOO_DATA_COPY") \
+            .load()
+
+      return SHAMPOO_copy_df
+
+def load_from_snowflake_to_postgresql_copy(snowflake_options: dict, pg_url: str, pg_properties: dict):
+        SHAMPOO_copy_df = load_and_join_tables_copy(snowflake_options)
+        
+        # Ensure there are no empty column names and no duplicate column names
+        SHAMPOO_copy_df = SHAMPOO_copy_df.toDF(*[col.replace(' ', '_').replace('"', '').replace('-', '_') if col else f"col_{i}" for i, col in enumerate(SHAMPOO_copy_df.columns)])
+        SHAMPOO_copy_df = SHAMPOO_copy_df.toDF(*[f"{col}_{i}" if SHAMPOO_copy_df.columns.count(col) > 1 else col for i, col in enumerate(SHAMPOO_copy_df.columns)])
+        print(SHAMPOO_copy_df.columns)
+        
+        # Truncate the existing table in PostgreSQL before loading new data
+        from psycopg2 import connect
+        # psycopg2 is a library for python
+
+        conn = None  # Initialize conn to None
+        try:
+            # Ensure the URL is correctly formatted for psycopg2
+            if pg_url.startswith('jdbc:'): #check if the postgresql url start with 'jdbc'
+                pg_url = pg_url[5:] 
+                # take the url from the 5th character
+            
+            conn = connect(  # create a connection to postgresql
+                dbname=pg_url.split('/')[-1],
+                user=pg_properties['user'],
+                password=pg_properties['password'],
+                host=pg_url.split('/')[2].split(':')[0],
+                port=pg_url.split('/')[2].split(':')[1] if ':' in pg_url.split('/')[2] else '5432'
+            )
+            with conn.cursor() as cursor:  # use the connection to truncate the existing table
+                cursor.execute("TRUNCATE TABLE SHAMPOO_DATA_COPY RESTART IDENTITY CASCADE")
+                conn.commit()
+                print("SHAMPOO_DATA_COPY table truncated successfully.")
+        except Exception as e:
+            print(f"Failed to truncate table SHAMPOO_DATA_COPY: {e}")
+        finally:
+            if conn:
+                conn.close()
+        
+        # Ensure the URL is correctly formatted for Spark JDBC
+        jdbc_url = f"jdbc:postgresql://{pg_url.split('//')[1]}"
+
+        # Write joined data to PostgreSQL
+        if SHAMPOO_copy_df:
+            SHAMPOO_copy_df.write \
+                .jdbc(url=jdbc_url, table="SHAMPOO_DATA_COPY", mode="overwrite", properties=pg_properties)
+            print("Joined data written to PostgreSQL")
+        else:
+            print("No sheets could be joined due to missing common columns.")
+
+    # Example usage
+    load_from_snowflake_to_postgresql_copy(snowflake_options, os.getenv('POSTGRESQL_URL'), {
+        'user': os.getenv('POSTGRESQL_USER'),
+        'password': os.getenv('POSTGRESQL_PASSWORD'),
+        'driver': os.getenv('POSTGRESQL_DRIVER'),
+        'currentSchema': os.getenv('POSTGRESQL_SCHEMA')
+    })
+
+    print('Joined data loaded from Snowflake and written to PostgreSQL successfully.')
 
 
 
