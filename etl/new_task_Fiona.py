@@ -2,7 +2,7 @@ def new_task_function_Fiona():
 
     print("This is a new task")
     # Import necessary libraries
-    from pyspark.sql import SparkSession
+    from pyspark.sql import SparkSession # type: ignore
     # pyspark.sql is a python library, SparkSession is a function from this libary
   
     import os
@@ -145,17 +145,24 @@ def new_task_function_Fiona():
 
 
 
- # Load the second spreadsheet from snowflake to postgresql
+   # Load the second spreadsheet from snowflake to postgresql
+
+   # Create a Spark session
+
+    spark_copy = SparkSession.builder \
+        .appName("Snowflake to PostgreSQL") \
+        .config("spark.jars.packages", "net.snowflake:spark-snowflake_2.12:2.10.0-spark_3.2,net.snowflake:snowflake-jdbc:3.13.3,org.postgresql:postgresql:42.2.23") \
+        .getOrCreate()
 
     def load_and_join_tables_copy(snowflake_options: dict):
         # Load data from Snowflake
-        SHAMPOO_copy_df = spark.read \
+        SHAMPOO_copy_df = spark_copy.read \
             .format("snowflake") \
             .options(**snowflake_options) \
             .option("dbtable", "SHAMPOO_DATA_COPY") \
             .load()
 
-      return SHAMPOO_copy_df
+        return SHAMPOO_copy_df
 
     def load_from_snowflake_to_postgresql_copy(snowflake_options: dict, pg_url: str, pg_properties: dict):
         SHAMPOO_copy_df = load_and_join_tables_copy(snowflake_options)
@@ -216,4 +223,4 @@ def new_task_function_Fiona():
 
 
 
-# new_task_function_Fiona()
+   # new_task_function_Fiona()

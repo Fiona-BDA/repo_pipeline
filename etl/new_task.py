@@ -2,7 +2,7 @@ def new_task_function():
 
     print("This is a new task")
     # Import necessary libraries
-    from pyspark.sql import SparkSession
+    from pyspark.sql import SparkSession # type: ignore
     # pyspark.sql is a python library, SparkSession is a function from this libary
   
     import os
@@ -94,7 +94,7 @@ def new_task_function():
         print(joined_df.columns)
         
         # Truncate the existing table in PostgreSQL before loading new data
-        from psycopg2 import connect
+        from psycopg2 import connect # type: ignore
         # psycopg2 is a library for python
 
         conn = None  # Initialize conn to None
