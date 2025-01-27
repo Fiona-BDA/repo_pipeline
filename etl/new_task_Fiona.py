@@ -145,9 +145,9 @@ def new_task_function_Fiona():
 
 
 
-# Load the second spreadsheet from snowflake to postgresql
+ # Load the second spreadsheet from snowflake to postgresql
 
-def load_and_join_tables_copy(snowflake_options: dict):
+    def load_and_join_tables_copy(snowflake_options: dict):
         # Load data from Snowflake
         SHAMPOO_copy_df = spark.read \
             .format("snowflake") \
@@ -157,7 +157,7 @@ def load_and_join_tables_copy(snowflake_options: dict):
 
       return SHAMPOO_copy_df
 
-def load_from_snowflake_to_postgresql_copy(snowflake_options: dict, pg_url: str, pg_properties: dict):
+    def load_from_snowflake_to_postgresql_copy(snowflake_options: dict, pg_url: str, pg_properties: dict):
         SHAMPOO_copy_df = load_and_join_tables_copy(snowflake_options)
         
         # Ensure there are no empty column names and no duplicate column names
@@ -213,10 +213,6 @@ def load_from_snowflake_to_postgresql_copy(snowflake_options: dict, pg_url: str,
     })
 
     print('Joined data loaded from Snowflake and written to PostgreSQL successfully.')
-
-
-
-
 
 
 
