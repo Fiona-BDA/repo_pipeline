@@ -38,7 +38,9 @@ def excel_to_snowflake_etl():
 
         # github_url = "https://github.com/python-vic/ETL_EXCEL_SF/raw/refs/heads/master/AdventureWorks_Sales.xlsx" 
 
-        github_url = "https://github.com/Fiona-BDA/repo_pipeline/raw/refs/heads/main/Fiona_Promotion_etl_data.xlsx"  # Replace with the actual raw URL
+        # github_url = "https://github.com/Fiona-BDA/repo_pipeline/raw/refs/heads/main/Fiona_Promotion_etl_data.xlsx"
+        
+        github_url = "https://github.com/Fiona-BDA/repo_pipeline/raw/refs/heads/main/fleet_service_data.xlsx"  # Replace with the actual raw URL
 
         # test
         # Step 1: Download the Excel file from GitHub
